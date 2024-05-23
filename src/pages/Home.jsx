@@ -12,14 +12,14 @@ const Home = () => {
     ];
 
     //내용 추가 
-    const [date, setDate] = useState("");
-    const [item, setItem] = useState("");
-    const [amount, setAmount] = useState("");
-    const [description, setDescription] = useState("");
+    const [date, setDate] = useState(""); //날짜
+    const [item, setItem] = useState(""); //항목
+    const [amount, setAmount] = useState(""); //돈
+    const [description, setDescription] = useState(""); //내용
     const [allitem, setAllitem] = useState(() => {
         const storedItems = localStorage.getItem('allItems');
         return storedItems ? JSON.parse(storedItems) : [];
-    });
+    }); // 전체
 
     const [activeMonth, setActiveMonth] = useState(() => {
         return localStorage.getItem("activeMonth") || "1월";
@@ -58,7 +58,9 @@ const Home = () => {
         setAllitem([...allitem, newItem]);
 
 
-        localStorage.setItem("allItems", JSON.stringify([...allitem, newItem]));
+        localStorage.setItem("allItems", JSON.stringify([...allitem, newItem])); // 로컬스토리지에서 가져오기
+
+        //입력창 비우기
         setDate('');
         setItem('');
         setAmount('');
@@ -214,6 +216,7 @@ const List = styled.div`
     padding: 15px;
     border-radius: 20px;
     background-color:#E0E7E9;
+    cursor: pointer;
 `;
 
 const DateWrapper = styled.div`
