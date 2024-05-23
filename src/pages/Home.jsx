@@ -43,7 +43,9 @@ const Home = () => {
                     {filterdata.length > 0 ? (
                         filterdata.map((item, index) => (
                             <List key={item.id}>
-                                {item.date} - {item.item}: {item.amount}원 - {item.description}
+                                <DateWrapper> {item.date} </DateWrapper>
+                                <MoneyWrapper> {item.amount}원 </MoneyWrapper>
+                                <Description> {item.item}: {item.description} </Description>
                             </List>
                         ))
                     ) : (
@@ -86,7 +88,7 @@ const Tab = styled.div`
 
 const Content = styled.div`
   margin-top: 20px;
-  width: 80%;
+  width: 70%;
   padding: 20px;
   border: 1px solid #ccc;
   border-radius: 4px;
@@ -95,16 +97,31 @@ const Content = styled.div`
 `;
 
 const List = styled.div`
+    border: 1px solid #E0E7E9;
+    margin: 10px;
+    padding: 15px;
+    border-radius: 20px;
+    background-color:#E0E7E9;
+`;
+
+const DateWrapper = styled.div`
+    font-size: 14px;
+    color: grey;
+`;
+
+const MoneyWrapper = styled.div`
+    text-align: end;
+    color: #d47f66;
+`;
+
+const Description = styled.div`
     /* 내용이 지정된 영역을 넘어설때 hidden */
     overflow: hidden;
     /* 공백 유지, 강제 한줄 처리 */
     white-space: nowrap;
     /* 한 줄이상의 컨텐츠일 경우 … 표시 */
     text-overflow: ellipsis;  
-    border: 1px solid #E0E7E9;
-    margin: 10px;
-    padding: 20px;
-    border-radius: 20px;
-    background-color:#E0E7E9;
-
-`
+    color: #1e2945;
+    font-size: 16px;
+    margin: 4px;
+`;
