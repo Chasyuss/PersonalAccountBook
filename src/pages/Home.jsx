@@ -29,16 +29,25 @@ const Home = () => {
     }); // 문자열을 날짜로 변경후, 해당 열을 가져옴 
 
     return (
-        <Form>
+        <form>
             <GlobalStyle />
             <Container>
+                <Input>
+                    <label> 날짜 </label>
+                    <DateInput type="text" placeholder='YYYY-MM-DD' />
+                    <label> 항목 </label>
+                    <InputTitle type="text" placeholder='지출 항목' />
+                    <label> 금액 </label>
+                    <MoneyInput type="number" placeholder='지출 금액' />
+                    <label> 내용 </label>
+                    <TextInput type="text" placeholder='지출 내용' />
+                    <AddButton type="submit"> 저장 </AddButton>
+                </Input>
+
                 <Tabs>
                     {months.map((month, index) => (
                         <Tab key={index} active={activeMonth === month} //클릭한 박스 확인위해 active prop에 할당할 값
-                            onClick={() => handleTab(month)}
-                        >
-                            {month}
-                        </Tab>
+                            onClick={() => handleTab(month)} > {month} </Tab>
                     ))}
                 </Tabs>
                 <Content>
@@ -55,14 +64,55 @@ const Home = () => {
                     )}
                 </Content>
             </Container>
-        </Form>
+        </form >
     );
 };
 
 export default Home;
 
-const Form = styled.div`
+const Input = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0;
+  border: 1px solid #ccc; 
+  border-radius: 4px;
+  padding: 20px;
+  background-color: #f9f9f9;
+  font-size: 15px;
+`;
 
+const DateInput = styled.input`
+  margin: 0 10px;
+  padding: 10px;
+  width: 100px;
+`;
+
+const InputTitle = styled.input`
+  margin: 0 10px;
+  padding: 10px;
+  width: 150px;
+`;
+
+const MoneyInput = styled.input`
+  margin: 0 10px;
+  padding: 10px;
+  width: 150px;
+`;
+
+const TextInput = styled.input`
+  margin: 0 10px;
+  padding: 10px;
+  width: 150px;
+`;
+
+const AddButton = styled.button`
+  padding: 13px;
+  background-color: #A3C6C4;
+  border: 1px solid #A3C6C4;
+  border-radius: 10px;
+  cursor: pointer;
 `;
 
 const Container = styled.div`
@@ -74,12 +124,17 @@ const Container = styled.div`
 const Tabs = styled.div`
   display: flex;
   flex-wrap: wrap;
+  justify-content: space-between;
   margin: 20px 0;
   border: 1px solid #ccc;
+  background-color: #f9f9f9;
+  border-radius: 4px;
+  padding: 20px;
 `;
 
 const Tab = styled.div`
   margin: 5px;
+  width: 10%;
   padding: 20px;
   text-align: center;
   cursor: pointer;
@@ -94,7 +149,7 @@ const Tab = styled.div`
 
 const Content = styled.div`
   margin-top: 20px;
-  width: 70%;
+  width: 80%;
   padding: 20px;
   border: 1px solid #ccc;
   border-radius: 4px;

@@ -2,7 +2,8 @@ import { createGlobalStyle } from "styled-components";
 
 const GlobalStyle = createGlobalStyle`
   html, body {
-    height: 100%;
+    max-width: 1200px;
+    min-width:800px;
     margin: 0;
     padding: 0;
   }
@@ -11,6 +12,7 @@ const GlobalStyle = createGlobalStyle`
     display: flex;
     justify-content: center;
     align-items: center;
+
   }
 `;
 
