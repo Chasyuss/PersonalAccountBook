@@ -1,6 +1,7 @@
 import React, { act, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import fakedata from './FakeData.json';
+import GlobalStyle from '../styles/GlobalStyle';
 
 
 const Home = () => {
@@ -28,7 +29,8 @@ const Home = () => {
     }); // 문자열을 날짜로 변경후, 해당 열을 가져옴 
 
     return (
-        <form>
+        <Form>
+            <GlobalStyle />
             <Container>
                 <Tabs>
                     {months.map((month, index) => (
@@ -53,11 +55,15 @@ const Home = () => {
                     )}
                 </Content>
             </Container>
-        </form>
+        </Form>
     );
 };
 
 export default Home;
+
+const Form = styled.div`
+
+`;
 
 const Container = styled.div`
   display: flex;
@@ -77,12 +83,12 @@ const Tab = styled.div`
   padding: 20px;
   text-align: center;
   cursor: pointer;
-  background-color: ${props => (props.active ? '#A3C6C4' : '#f1f1f1')}; 
+  background-color: ${props => (props.active ? '#A3C6C4' : '#E0E7E9')}; 
   color: ${props => (props.active ? 'white' : 'black')}; // 글씨 색상 
   border-radius: 4px;
 
   &:hover {
-    background-color: ${props => (props.active ? '#A3C6C4' : '#ddd')}; //클릭시 색상
+    background-color: ${props => (props.active ? '#A3C6C4' : '#E0E7E9')}; //클릭시 색상
   }
 `;
 
