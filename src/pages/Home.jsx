@@ -2,6 +2,7 @@ import React, { act, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import fakedata from './FakeData.json';
 import GlobalStyle from '../styles/GlobalStyle';
+import { v4 as uuidv4 } from 'uuid';
 
 
 const Home = () => {
@@ -9,6 +10,16 @@ const Home = () => {
         '1월', '2월', '3월', '4월', '5월', '6월',
         '7월', '8월', '9월', '10월', '11월', '12월'
     ];
+
+    //내용 추가 
+    const [date, setDate] = useState("");
+    const [item, setItem] = useState("");
+    const [amount, setAmount] = useState("");
+    const [description, setDescription] = useState("");
+    const [allitem, setAllitem] = useState(() => {
+        const storedItems = localStorage.getItem('allItems');
+        return storedItems ? JSON.parse(storedItems) : [];
+    });
 
     const [activeMonth, setActiveMonth] = useState(() => {
         return localStorage.getItem("activeMonth") || "1월";
@@ -18,29 +29,69 @@ const Home = () => {
         localStorage.setItem("activeMonth", activeMonth);
     }, [activeMonth]);
 
+    const handleSubmit = ((e) => {
+        e.preventDefault();
+
+        if (!date || !amount) {
+            alert('날짜, 금액을 입력해주세요');
+            return;
+        }
+
+        if (isNaN(Date.parse(date))) {
+            alert('올바른 날짜 형식이 아닙니다. YYYY-MM-DD 형식을 사용해주세요');
+            return;
+        }
+
+        if (isNaN(amount) || amount <= 0) {
+            alert('올바른 금액을 입력해주세요');
+            return;
+        }
+
+        const newItem = {
+            id: uuidv4(),
+            date,
+            item,
+            amount,
+            description
+        };
+
+        setAllitem([...allitem, newItem]);
+
+
+        localStorage.setItem("allItems", JSON.stringify([...allitem, newItem]));
+        setDate('');
+        setItem('');
+        setAmount('');
+        setDescription('');
+    });
+
     const handleTab = (month) => {
         setActiveMonth(month);
     };
 
+    const BothData = [...fakedata, ...allitem]; // fakeData랑 로컬스토리지에 있는 데이터를 합침 
+
     // 원하는 월 필터링 
-    const filterdata = fakedata.filter(item => {
+    //fakedata랑 로컬스토리지 데이터를 합치게 나오게함
+    const filterdata = BothData.filter(item => {
         const dataMonth = new Date(item.date).getMonth() + 1; // 0부터 시작이니까 1 더해줘야 안밀림
         return `${dataMonth}월` === activeMonth;
     }); // 문자열을 날짜로 변경후, 해당 열을 가져옴 
 
+
     return (
-        <form>
+        <form onSubmit={handleSubmit}>
             <GlobalStyle />
             <Container>
                 <Input>
                     <label> 날짜 </label>
-                    <DateInput type="text" placeholder='YYYY-MM-DD' />
+                    <DateInput type="text" placeholder='YYYY-MM-DD' value={date} onChange={(e) => setDate(e.target.value)} />
                     <label> 항목 </label>
-                    <InputTitle type="text" placeholder='지출 항목' />
+                    <InputTitle type="text" placeholder='지출 항목' value={item} onChange={(e) => setItem(e.target.value)} />
                     <label> 금액 </label>
-                    <MoneyInput type="number" placeholder='지출 금액' />
+                    <MoneyInput type="number" placeholder='지출 금액' value={amount} onChange={(e) => setAmount(e.target.value)} />
                     <label> 내용 </label>
-                    <TextInput type="text" placeholder='지출 내용' />
+                    <TextInput type="text" placeholder='지출 내용' value={description} onChange={(e) => setDescription(e.target.value)} />
                     <AddButton type="submit"> 저장 </AddButton>
                 </Input>
 
