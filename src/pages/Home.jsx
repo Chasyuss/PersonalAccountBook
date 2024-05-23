@@ -1,16 +1,31 @@
-import React, { useState } from 'react';
+import React, { act, useEffect, useState } from 'react';
 import styled from 'styled-components';
+import fakedata from './FakeData.json';
+
 
 const Home = () => {
-    const [activeMonth, setActiveMonth] = useState(0);
     const months = [
         '1월', '2월', '3월', '4월', '5월', '6월',
         '7월', '8월', '9월', '10월', '11월', '12월'
     ];
 
+    const [activeMonth, setActiveMonth] = useState(() => {
+        return localStorage.getItem("activeMonth") || "1월";
+    });
+
+    useEffect(() => {
+        localStorage.setItem("activeMonth", activeMonth);
+    }, [activeMonth]);
+
     const handleTab = (month) => {
         setActiveMonth(month);
     };
+
+    // 원하는 월 필터링 
+    const filterdata = fakedata.filter(item => {
+        const dataMonth = new Date(item.date).getMonth() + 1; // 0부터 시작이니까 1 더해줘야 안밀림
+        return `${dataMonth}월` === activeMonth;
+    }); // 문자열을 날짜로 변경후, 해당 열을 가져옴 
 
     return (
         <form>
@@ -25,7 +40,15 @@ const Home = () => {
                     ))}
                 </Tabs>
                 <Content>
-                    {activeMonth ? `${activeMonth} 총 지출` : '월을 선택해 주세요.'}
+                    {filterdata.length > 0 ? (
+                        filterdata.map((item, index) => (
+                            <List key={item.id}>
+                                {item.date} - {item.item}: {item.amount}원 - {item.description}
+                            </List>
+                        ))
+                    ) : (
+                        '해당 월에 지출 내역이 없습니다.'
+                    )}
                 </Content>
             </Container>
         </form>
@@ -68,4 +91,20 @@ const Content = styled.div`
   border: 1px solid #ccc;
   border-radius: 4px;
   background-color: #f9f9f9;
+  border-radius: 10px;
 `;
+
+const List = styled.div`
+    /* 내용이 지정된 영역을 넘어설때 hidden */
+    overflow: hidden;
+    /* 공백 유지, 강제 한줄 처리 */
+    white-space: nowrap;
+    /* 한 줄이상의 컨텐츠일 경우 … 표시 */
+    text-overflow: ellipsis;  
+    border: 1px solid #E0E7E9;
+    margin: 10px;
+    padding: 20px;
+    border-radius: 20px;
+    background-color:#E0E7E9;
+
+`
