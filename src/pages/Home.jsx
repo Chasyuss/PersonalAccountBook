@@ -81,7 +81,7 @@ const Home = () => {
         return `${dataMonth}월` === activeMonth;
     }); // 문자열을 날짜로 변경후, 해당 열을 가져옴 
 
-    const navigate = useNavigate();
+    const navigate = useNavigate(); //페이지 이동 
     const HandleDetailClick = (id) => {
         navigate(`/detail/${id}`);
     }
@@ -170,6 +170,10 @@ const AddButton = styled.button`
   border: 1px solid #A3C6C4;
   border-radius: 10px;
   cursor: pointer;
+
+  &:hover{
+    background-color: #71b0a4;
+  }
 `;
 
 const Container = styled.div`
@@ -221,6 +225,10 @@ const List = styled.div`
     border-radius: 20px;
     background-color:#E0E7E9;
     cursor: pointer;
+
+    &:hover{
+        background-color: #71b0a4;
+    }
 `;
 
 const DateWrapper = styled.div`
