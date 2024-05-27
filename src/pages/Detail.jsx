@@ -15,6 +15,7 @@ const Detail = () => {
     const amountRef = useRef();
     const descriptionRef = useRef();
 
+    //수정 
     const HandleEdit = () => {
         const editItem = {
             ...item,
@@ -38,7 +39,35 @@ const Detail = () => {
 
         alert('수정되었습니다.');
         navigate('/'); // 홈으로 이동 
-    }
+    };
+
+    //삭제 
+    const HandleDelete = () => {
+        if (window.confirm('정말로 이 지출 항목을 삭제하시겠습니까?')) { // confirm 사용해서 사용자에게 확인받기
+            //fakedata와 allitem에서 id가 일치하지 않은것만 필터링하고 새로운 배열 만듬
+            const filterItems = [...fakedata, ...allItems].filter(i => i.id !== item.id);
+
+            //filterItems 배열에서 fakedata 길이 이후의 항목들만 localItems 배열에 저장
+            const localItems = filterItems.slice(fakedata.length);
+
+            //로컬스토리지에 업뎉이트
+            localStorage.setItem('allItems', JSON.stringify(localItems));
+            alert('항목이 삭제되었습니다');
+            navigate('/'); // 홈 이동 
+
+
+        } else { //사용자가 취소 선택시, 다시 home page로 전환 
+            return navigate('/')
+        }
+
+    };
+
+
+    //되돌아가기 버튼 
+    const HandleBack = () => {
+        navigate(-1); // 이전단계로 되돌리기 
+    };
+
     return (
         <div>
             <DetailContainer>
@@ -65,8 +94,8 @@ const Detail = () => {
 
                 <AllButton>
                     <EditButton onClick={HandleEdit}> 수정 </EditButton>
-                    <DeleteButton> 삭제 </DeleteButton>
-                    <Button> 뒤로가기 </Button>
+                    <DeleteButton onClick={HandleDelete}> 삭제 </DeleteButton>
+                    <Button onClick={HandleBack}> 뒤로가기 </Button>
                 </AllButton>
             </DetailContainer>
         </div>
