@@ -184,7 +184,7 @@ const Container = styled.div`
 
 const Tabs = styled.div`
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: wrap; // 6개씩 보이게 만들기
   justify-content: space-between;
   margin: 20px 0;
   border: 1px solid #ccc;
