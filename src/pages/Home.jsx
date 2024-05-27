@@ -1,7 +1,7 @@
 import React, { act, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import fakedata from './FakeData.json';
-import GlobalStyle from '../styles/GlobalStyle';
+// import GlobalStyle from '../styles/GlobalStyle';
 import { v4 as uuidv4 } from 'uuid';
 import { useNavigate } from 'react-router-dom';
 
@@ -88,7 +88,6 @@ const Home = () => {
 
     return (
         <form onSubmit={handleSubmit}>
-            <GlobalStyle />
             <Container>
                 <Input>
                     <label> 날짜 </label>
