@@ -1,40 +1,70 @@
-import React from 'react'
-import { useParams } from 'react-router-dom'
+import React, { useRef, useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 import { styled } from 'styled-components';
 import fakedata from './FakeData.json';
 
 const Detail = () => {
     const { id } = useParams();
-    const allItems = JSON.parse(localStorage.getItem('allItems')) || [];
+
+    const navigate = useNavigate();
+    const [allItems, setAllItems] = useState(JSON.parse(localStorage.getItem('allItems')) || []);
     const item = [...fakedata, ...allItems].find(item => item.id === id);
 
+    const dateRef = useRef();
+    const itemRef = useRef();
+    const amountRef = useRef();
+    const descriptionRef = useRef();
 
+    const HandleEdit = () => {
+        const editItem = {
+            ...item,
+            date: dateRef.current.value,
+            item: itemRef.current.value,
+            amount: parseFloat(amountRef.current.value),
+            description: descriptionRef.current.value
+        };
+
+        const updateItems = [...fakedata, ...allItems].map(i => (i.id === item.id ? editItem : i));
+
+        if (updateItems.length > fakedata.length) {
+            const localItems = updateItems.slice(fakedata.length);
+            localStorage.setItem('allItems', JSON.stringify(localItems));
+            setAllItems(localItems);
+        }
+        else {
+            const localItems = updateItems.slice(fakedata.length);
+            setAllItems(localItems);
+        }
+
+        alert('수정되었습니다.');
+        navigate('/'); // 홈으로 이동 
+    }
     return (
         <div>
             <DetailContainer>
                 <Title> 정보</Title>
                 <Detailinput>
                     <Label> 날짜 </Label>
-                    <Input type="text" defaultValue={item.date} />
+                    <Input type="text" defaultValue={item.date} ref={dateRef} />
                 </Detailinput>
 
                 <Detailinput>
                     <Label> 항목 </Label>
-                    <Input type="text" defaultValue={item.item} />
+                    <Input type="text" defaultValue={item.item} ref={itemRef} />
                 </Detailinput>
 
                 <Detailinput>
                     <Label> 금액 </Label>
-                    <Input type="text" defaultValue={item.amount} />
+                    <Input type="text" defaultValue={item.amount} ref={amountRef} />
                 </Detailinput>
 
                 <Detailinput>
                     <Label> 내용 </Label>
-                    <Input type="text" defaultValue={item.description} />
+                    <Input type="text" defaultValue={item.description} ref={descriptionRef} />
                 </Detailinput>
 
                 <AllButton>
-                    <EditButton> 수정 </EditButton>
+                    <EditButton onClick={HandleEdit}> 수정 </EditButton>
                     <DeleteButton> 삭제 </DeleteButton>
                     <Button> 뒤로가기 </Button>
                 </AllButton>
