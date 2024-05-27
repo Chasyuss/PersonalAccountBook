@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import fakedata from './FakeData.json';
 import GlobalStyle from '../styles/GlobalStyle';
 import { v4 as uuidv4 } from 'uuid';
+import { useNavigate } from 'react-router-dom';
 
 
 const Home = () => {
@@ -80,6 +81,10 @@ const Home = () => {
         return `${dataMonth}월` === activeMonth;
     }); // 문자열을 날짜로 변경후, 해당 열을 가져옴 
 
+    const navigate = useNavigate();
+    const HandleDetailClick = (id) => {
+        navigate(`/detail/${id}`);
+    }
 
     return (
         <form onSubmit={handleSubmit}>
@@ -105,8 +110,8 @@ const Home = () => {
                 </Tabs>
                 <Content>
                     {filterdata.length > 0 ? (
-                        filterdata.map((item, index) => (
-                            <List key={item.id}>
+                        filterdata.map((item) => (
+                            <List key={item.id} onClick={() => HandleDetailClick(item.id)}>
                                 <DateWrapper> {item.date} </DateWrapper>
                                 <MoneyWrapper> {item.amount}원 </MoneyWrapper>
                                 <Description> {item.item}: {item.description} </Description>
