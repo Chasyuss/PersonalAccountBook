@@ -1,7 +1,6 @@
 import React, { act, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import fakedata from './FakeData.json';
-// import GlobalStyle from '../styles/GlobalStyle';
 import { v4 as uuidv4 } from 'uuid';
 import { useNavigate } from 'react-router-dom';
 
@@ -103,7 +102,7 @@ const Home = () => {
 
                 <Tabs>
                     {months.map((month, index) => (
-                        <Tab key={index} active={activeMonth === month} //클릭한 박스 확인위해 active prop에 할당할 값
+                        <Tab key={index} $active={activeMonth === month} //클릭한 박스 확인위해 active prop에 할당할 값
                             onClick={() => handleTab(month)} > {month} </Tab>
                     ))}
                 </Tabs>
@@ -199,12 +198,12 @@ const Tab = styled.div`
   padding: 20px;
   text-align: center;
   cursor: pointer;
-  background-color: ${props => (props.active ? '#A3C6C4' : '#E0E7E9')}; 
-  color: ${props => (props.active ? 'white' : 'black')}; // 글씨 색상 
+  background-color: ${props => (props.$active ? '#A3C6C4' : '#E0E7E9')}; 
+  color: ${props => (props.$active ? 'white' : 'black')}; // 글씨 색상 
   border-radius: 4px;
 
   &:hover {
-    background-color: ${props => (props.active ? '#A3C6C4' : '#E0E7E9')}; //클릭시 색상
+    background-color: ${props => (props.$active ? '#A3C6C4' : '#E0E7E9')}; //클릭시 색상
   }
 `;
 
