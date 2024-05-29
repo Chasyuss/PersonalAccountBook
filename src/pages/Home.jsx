@@ -1,9 +1,9 @@
 import React, { act, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import fakedata from './FakeData.json';
-// import GlobalStyle from '../styles/GlobalStyle';
 import { v4 as uuidv4 } from 'uuid';
 import { useNavigate } from 'react-router-dom';
+import { useExpense } from '../context/Context';
 
 
 const Home = () => {
@@ -17,10 +17,8 @@ const Home = () => {
     const [item, setItem] = useState(""); //항목
     const [amount, setAmount] = useState(""); //돈
     const [description, setDescription] = useState(""); //내용
-    const [allitem, setAllitem] = useState(() => {
-        const storedItems = localStorage.getItem('allItems');
-        return storedItems ? JSON.parse(storedItems) : [];
-    }); // 전체
+    const { allItems, addItem } = useExpense();
+
 
     const [activeMonth, setActiveMonth] = useState(() => {
         return localStorage.getItem("activeMonth") || "1월";
@@ -56,10 +54,7 @@ const Home = () => {
             description
         };
 
-        setAllitem([...allitem, newItem]);
-
-
-        localStorage.setItem("allItems", JSON.stringify([...allitem, newItem])); // 로컬스토리지에서 가져오기
+        addItem(newItem);
 
         //입력창 비우기
         setDate('');
@@ -72,7 +67,7 @@ const Home = () => {
         setActiveMonth(month);
     };
 
-    const BothData = [...fakedata, ...allitem]; // fakeData랑 로컬스토리지에 있는 데이터를 합침 
+    const BothData = [...fakedata, ...allItems]; // fakeData랑 로컬스토리지에 있는 데이터를 합침 
 
     // 원하는 월 필터링 
     //fakedata랑 로컬스토리지 데이터를 합치게 나오게함
@@ -103,7 +98,7 @@ const Home = () => {
 
                 <Tabs>
                     {months.map((month, index) => (
-                        <Tab key={index} active={activeMonth === month} //클릭한 박스 확인위해 active prop에 할당할 값
+                        <Tab key={index} $active={activeMonth === month} //클릭한 박스 확인위해 active prop에 할당할 값
                             onClick={() => handleTab(month)} > {month} </Tab>
                     ))}
                 </Tabs>
@@ -199,12 +194,12 @@ const Tab = styled.div`
   padding: 20px;
   text-align: center;
   cursor: pointer;
-  background-color: ${props => (props.active ? '#A3C6C4' : '#E0E7E9')}; 
-  color: ${props => (props.active ? 'white' : 'black')}; // 글씨 색상 
+  background-color: ${props => (props.$active ? '#A3C6C4' : '#E0E7E9')}; 
+  color: ${props => (props.$active ? 'white' : 'black')}; // 글씨 색상 
   border-radius: 4px;
 
   &:hover {
-    background-color: ${props => (props.active ? '#A3C6C4' : '#E0E7E9')}; //클릭시 색상
+    background-color: ${props => (props.$active ? '#A3C6C4' : '#E0E7E9')}; //클릭시 색상
   }
 `;
 
