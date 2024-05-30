@@ -35,6 +35,18 @@ export const ExpenseProvider = ({ children }) => {
     localStorage.setItem("allItems", JSON.stringify(updatedItems));
   };
 
+  const handleEdit = (editItem) => {
+    const updatedItems = allItems.map(i => (i.id === editItem.id ? editItem : i));
+    setAllItems(updatedItems);
+    localStorage.setItem('allItems', JSON.stringify(updatedItems));
+  };
+
+  const handleDelete = (id) => {
+    const filteredItems = allItems.filter(i => i.id !== id);
+    setAllItems(filteredItems);
+    localStorage.setItem('allItems', JSON.stringify(filteredItems));
+  };
+
   const handleTab = (month) => {
     setActiveMonth(month);
   };
@@ -46,6 +58,8 @@ export const ExpenseProvider = ({ children }) => {
         activeMonth,
         setActiveMonth,
         handleSubmit,
+        handleEdit,
+        handleDelete,
         handleTab
       }}
     >

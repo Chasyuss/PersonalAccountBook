@@ -1,16 +1,14 @@
-import React, { useRef, useState } from 'react'
+import React, { useContext, useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { styled } from 'styled-components';
+import { ExpenseContext } from '../context/ExpenseContext';
+
 
 const Detail = () => {
+    const { allItems, handleEdit, handleDelete } = useContext(ExpenseContext);
     const { id } = useParams();
 
     const navigate = useNavigate(); //창 넘긱 
-    const [allItems, setAllItems] = useState(() => {
-        const storedItems = localStorage.getItem('allItems');
-        const allItems = storedItems ? JSON.parse(storedItems) : [];
-        return allItems;
-    });
     const item = [...allItems].find(item => item.id === id); // 정보 화면 
 
     //Ref사용
@@ -19,8 +17,7 @@ const Detail = () => {
     const amountRef = useRef();
     const descriptionRef = useRef();
 
-    //수정 
-    const handleEdit = () => {
+    const onEdit = () => {
         const editItem = {
             ...item,
             date: dateRef.current.value,
@@ -29,32 +26,20 @@ const Detail = () => {
             description: descriptionRef.current.value
         };
 
-        const updateItems = allItems.map(i => (i.id === item.id ? editItem : i)); //업데이트
-        setAllItems(updateItems);
-        localStorage.setItem('allItems', JSON.stringify(updateItems)); //로컬스토리지 저장
-
+        handleEdit(editItem);
         alert('수정되었습니다.');
-        navigate('/'); // 홈으로 이동 
+        navigate('/');
     };
 
-    //삭제 
-    const handleDelete = () => {
-        if (window.confirm('정말로 이 지출 항목을 삭제하시겠습니까?')) { // confirm 사용해서 사용자에게 확인받기
-            //allitem에서 id가 일치하지 않은것만 필터링하고 새로운 배열 만듬
-            const filterItems = allItems.filter(i => i.id !== item.id);
-            setAllItems(filterItems);
-            //로컬스토리지에 업데이트
-            localStorage.setItem('allItems', JSON.stringify(filterItems));
+    const onDelete = () => {
+        if (window.confirm('정말로 이 지출 항목을 삭제하시겠습니까?')) {
+            handleDelete(item.id);
             alert('항목이 삭제되었습니다');
-            navigate('/'); // 홈 이동 
-
-
-        } else { //사용자가 취소 선택시, 다시 home page로 전환 
-            return navigate('/')
+            navigate('/');
+        } else {
+            navigate('/');
         }
-
     };
-
 
     //되돌아가기 버튼 
     const handleBack = () => {
@@ -86,8 +71,8 @@ const Detail = () => {
                 </Detailinput>
 
                 <AllButton>
-                    <EditButton onClick={handleEdit}> 수정 </EditButton>
-                    <DeleteButton onClick={handleDelete}> 삭제 </DeleteButton>
+                    <EditButton onClick={onEdit}> 수정 </EditButton>
+                    <DeleteButton onClick={onDelete}> 삭제 </DeleteButton>
                     <Button onClick={handleBack}> 뒤로가기 </Button>
                 </AllButton>
             </DetailContainer>
