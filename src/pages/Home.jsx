@@ -20,7 +20,7 @@ const Home = () => {
     const [allItems, setAllItems] = useState(() => {
         const storedItems = localStorage.getItem('allItems');
         const allItems = storedItems ? JSON.parse(storedItems) : [];
-        return [...fakedata, ...allItems];
+        return [...allItems];
     }); //전체 fakedata랑 Allitem 합치기
 
     const [activeMonth, setActiveMonth] = useState(() => {
