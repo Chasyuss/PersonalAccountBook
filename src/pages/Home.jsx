@@ -21,11 +21,11 @@ const Home = () => {
         const storedItems = localStorage.getItem('allItems');
         const allItems = storedItems ? JSON.parse(storedItems) : [];
         return [...fakedata, ...allItems];
-    });
+    }); //전체 fakedata랑 Allitem 합치기
 
     const [activeMonth, setActiveMonth] = useState(() => {
         return localStorage.getItem("activeMonth") || "1월";
-    });
+    }); //월 선택 
 
     useEffect(() => {
         localStorage.setItem("activeMonth", activeMonth);
