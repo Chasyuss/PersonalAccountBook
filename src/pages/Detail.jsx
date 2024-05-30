@@ -6,22 +6,22 @@ import fakedata from './FakeData';
 const Detail = () => {
     const { id } = useParams();
 
-    const navigate = useNavigate();
+    const navigate = useNavigate(); //창 넘긱 
     const [allItems, setAllItems] = useState(() => {
         const storedItems = localStorage.getItem('allItems');
         const allItems = storedItems ? JSON.parse(storedItems) : [];
         return allItems;
     });
-    console.log(allItems);
-    const item = [...allItems].find(item => item.id === id);
+    const item = [...allItems].find(item => item.id === id); // 정보 화면 
 
+    //Ref사용
     const dateRef = useRef();
     const itemRef = useRef();
     const amountRef = useRef();
     const descriptionRef = useRef();
 
     //수정 
-    const HandleEdit = () => {
+    const handleEdit = () => {
         const editItem = {
             ...item,
             date: dateRef.current.value,
@@ -30,18 +30,18 @@ const Detail = () => {
             description: descriptionRef.current.value
         };
 
-        const updateItems = allItems.map(i => (i.id === item.id ? editItem : i));
+        const updateItems = allItems.map(i => (i.id === item.id ? editItem : i)); //업데이트
         setAllItems(updateItems);
-        localStorage.setItem('allItems', JSON.stringify(updateItems));
+        localStorage.setItem('allItems', JSON.stringify(updateItems)); //로컬스토리지 저장
 
         alert('수정되었습니다.');
         navigate('/'); // 홈으로 이동 
     };
 
     //삭제 
-    const HandleDelete = () => {
+    const handleDelete = () => {
         if (window.confirm('정말로 이 지출 항목을 삭제하시겠습니까?')) { // confirm 사용해서 사용자에게 확인받기
-            //fakedata와 allitem에서 id가 일치하지 않은것만 필터링하고 새로운 배열 만듬
+            //allitem에서 id가 일치하지 않은것만 필터링하고 새로운 배열 만듬
             const filterItems = allItems.filter(i => i.id !== item.id);
             setAllItems(filterItems);
             //로컬스토리지에 업데이트
@@ -58,7 +58,7 @@ const Detail = () => {
 
 
     //되돌아가기 버튼 
-    const HandleBack = () => {
+    const handleBack = () => {
         navigate(-1); // 이전단계로 되돌리기 
     };
 
@@ -87,9 +87,9 @@ const Detail = () => {
                 </Detailinput>
 
                 <AllButton>
-                    <EditButton onClick={HandleEdit}> 수정 </EditButton>
-                    <DeleteButton onClick={HandleDelete}> 삭제 </DeleteButton>
-                    <Button onClick={HandleBack}> 뒤로가기 </Button>
+                    <EditButton onClick={handleEdit}> 수정 </EditButton>
+                    <DeleteButton onClick={handleDelete}> 삭제 </DeleteButton>
+                    <Button onClick={handleBack}> 뒤로가기 </Button>
                 </AllButton>
             </DetailContainer>
         </div>
