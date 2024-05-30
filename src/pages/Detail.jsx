@@ -1,14 +1,19 @@
 import React, { useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { styled } from 'styled-components';
-import fakedata from './FakeData.json';
+import fakedata from './FakeData';
 
 const Detail = () => {
     const { id } = useParams();
 
     const navigate = useNavigate();
-    const [allItems, setAllItems] = useState(JSON.parse(localStorage.getItem('allItems')) || []);
-    const item = [...fakedata, ...allItems].find(item => item.id === id);
+    const [allItems, setAllItems] = useState(() => {
+        const storedItems = localStorage.getItem('allItems');
+        const allItems = storedItems ? JSON.parse(storedItems) : [];
+        return allItems;
+    });
+    console.log(allItems);
+    const item = [...allItems].find(item => item.id === id);
 
     const dateRef = useRef();
     const itemRef = useRef();
@@ -25,17 +30,9 @@ const Detail = () => {
             description: descriptionRef.current.value
         };
 
-        const updateItems = [...fakedata, ...allItems].map(i => (i.id === item.id ? editItem : i));
-
-        if (updateItems.length > fakedata.length) {
-            const localItems = updateItems.slice(fakedata.length);
-            localStorage.setItem('allItems', JSON.stringify(localItems));
-            setAllItems(localItems);
-        }
-        else {
-            const localItems = updateItems.slice(fakedata.length);
-            setAllItems(localItems);
-        }
+        const updateItems = allItems.map(i => (i.id === item.id ? editItem : i));
+        setAllItems(updateItems);
+        localStorage.setItem('allItems', JSON.stringify(updateItems));
 
         alert('수정되었습니다.');
         navigate('/'); // 홈으로 이동 
@@ -45,13 +42,10 @@ const Detail = () => {
     const HandleDelete = () => {
         if (window.confirm('정말로 이 지출 항목을 삭제하시겠습니까?')) { // confirm 사용해서 사용자에게 확인받기
             //fakedata와 allitem에서 id가 일치하지 않은것만 필터링하고 새로운 배열 만듬
-            const filterItems = [...fakedata, ...allItems].filter(i => i.id !== item.id);
-
-            //filterItems 배열에서 fakedata 길이 이후의 항목들만 localItems 배열에 저장
-            const localItems = filterItems.slice(fakedata.length);
-
-            //로컬스토리지에 업뎉이트
-            localStorage.setItem('allItems', JSON.stringify(localItems));
+            const filterItems = allItems.filter(i => i.id !== item.id);
+            setAllItems(filterItems);
+            //로컬스토리지에 업데이트
+            localStorage.setItem('allItems', JSON.stringify(filterItems));
             alert('항목이 삭제되었습니다');
             navigate('/'); // 홈 이동 
 
@@ -103,6 +97,7 @@ const Detail = () => {
 }
 
 export default Detail;
+
 const Title = styled.div`
     font-size: 30px;
     text-align: center;
