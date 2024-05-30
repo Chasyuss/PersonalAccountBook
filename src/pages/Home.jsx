@@ -16,10 +16,12 @@ const Home = () => {
     const [item, setItem] = useState(""); //항목
     const [amount, setAmount] = useState(""); //돈
     const [description, setDescription] = useState(""); //내용
-    const [allitem, setAllitem] = useState(() => {
+
+    const [allItems, setAllItems] = useState(() => {
         const storedItems = localStorage.getItem('allItems');
-        return storedItems ? JSON.parse(storedItems) : [];
-    }); // 전체
+        const allItems = storedItems ? JSON.parse(storedItems) : [];
+        return [...fakedata, ...allItems];
+    });
 
     const [activeMonth, setActiveMonth] = useState(() => {
         return localStorage.getItem("activeMonth") || "1월";
@@ -28,6 +30,20 @@ const Home = () => {
     useEffect(() => {
         localStorage.setItem("activeMonth", activeMonth);
     }, [activeMonth]);
+
+
+    useEffect(() => {
+        // 초기화 시 fakedata와 로컬 스토리지 데이터를 합쳐 로컬 스토리지에 저장
+        const storedItems = localStorage.getItem('allItems');
+        const allItems = storedItems ? JSON.parse(storedItems) : [];
+        const combinedItems = [...fakedata, ...allItems];
+        if (allItems.length === 0) {
+            localStorage.setItem('allItems', JSON.stringify(combinedItems));
+            setAllItems(combinedItems);
+        } else {
+            setAllItems(allItems);
+        }
+    }, []);
 
     const handleSubmit = ((e) => {
         e.preventDefault();
@@ -55,10 +71,11 @@ const Home = () => {
             description
         };
 
-        setAllitem([...allitem, newItem]);
+
+        setAllItems([...allItems, newItem]);
 
 
-        localStorage.setItem("allItems", JSON.stringify([...allitem, newItem])); // 로컬스토리지에서 가져오기
+        localStorage.setItem("allItems", JSON.stringify([...allItems, newItem])); // 로컬스토리지에서 가져오기
 
         //입력창 비우기
         setDate('');
@@ -71,11 +88,10 @@ const Home = () => {
         setActiveMonth(month);
     };
 
-    const BothData = [...fakedata, ...allitem]; // fakeData랑 로컬스토리지에 있는 데이터를 합침 
 
     // 원하는 월 필터링 
     //fakedata랑 로컬스토리지 데이터를 합치게 나오게함
-    const filterdata = BothData.filter(item => {
+    const filterdata = allItems.filter(item => {
         const dataMonth = new Date(item.date).getMonth() + 1; // 0부터 시작이니까 1 더해줘야 안밀림
         return `${dataMonth}월` === activeMonth;
     }); // 문자열을 날짜로 변경후, 해당 열을 가져옴 
