@@ -1,25 +1,27 @@
 import React, { useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { styled } from 'styled-components';
-import fakedata from './FakeData.json';
-import { useExpense } from '../context/Context';
 
 const Detail = () => {
     const { id } = useParams();
 
-    const navigate = useNavigate();
-    const { allItems, editItem, deleteItem } = useExpense();
+    const navigate = useNavigate(); //창 넘긱 
+    const [allItems, setAllItems] = useState(() => {
+        const storedItems = localStorage.getItem('allItems');
+        const allItems = storedItems ? JSON.parse(storedItems) : [];
+        return allItems;
+    });
+    const item = [...allItems].find(item => item.id === id); // 정보 화면 
 
+    //Ref사용
     const dateRef = useRef();
     const itemRef = useRef();
     const amountRef = useRef();
     const descriptionRef = useRef();
 
-    const item = allItems.find(item => item.id === id);
-
     //수정 
-    const HandleEdit = () => {
-        const editedItem = {
+    const handleEdit = () => {
+        const editItem = {
             ...item,
             date: dateRef.current.value,
             item: itemRef.current.value,
@@ -27,25 +29,35 @@ const Detail = () => {
             description: descriptionRef.current.value
         };
 
-        editItem(editedItem);
+        const updateItems = allItems.map(i => (i.id === item.id ? editItem : i)); //업데이트
+        setAllItems(updateItems);
+        localStorage.setItem('allItems', JSON.stringify(updateItems)); //로컬스토리지 저장
+
         alert('수정되었습니다.');
         navigate('/'); // 홈으로 이동 
     };
 
     //삭제 
-    const HandleDelete = () => {
-        if (window.confirm('정말로 이 지출 항목을 삭제하시겠습니까?')) {
-            deleteItem(item.id);
+    const handleDelete = () => {
+        if (window.confirm('정말로 이 지출 항목을 삭제하시겠습니까?')) { // confirm 사용해서 사용자에게 확인받기
+            //allitem에서 id가 일치하지 않은것만 필터링하고 새로운 배열 만듬
+            const filterItems = allItems.filter(i => i.id !== item.id);
+            setAllItems(filterItems);
+            //로컬스토리지에 업데이트
+            localStorage.setItem('allItems', JSON.stringify(filterItems));
             alert('항목이 삭제되었습니다');
-            navigate('/');
-        } else {
-            return navigate('/');
+            navigate('/'); // 홈 이동 
+
+
+        } else { //사용자가 취소 선택시, 다시 home page로 전환 
+            return navigate('/')
         }
+
     };
 
 
     //되돌아가기 버튼 
-    const HandleBack = () => {
+    const handleBack = () => {
         navigate(-1); // 이전단계로 되돌리기 
     };
 
@@ -74,9 +86,9 @@ const Detail = () => {
                 </Detailinput>
 
                 <AllButton>
-                    <EditButton onClick={HandleEdit}> 수정 </EditButton>
-                    <DeleteButton onClick={HandleDelete}> 삭제 </DeleteButton>
-                    <Button onClick={HandleBack}> 뒤로가기 </Button>
+                    <EditButton onClick={handleEdit}> 수정 </EditButton>
+                    <DeleteButton onClick={handleDelete}> 삭제 </DeleteButton>
+                    <Button onClick={handleBack}> 뒤로가기 </Button>
                 </AllButton>
             </DetailContainer>
         </div>
@@ -84,6 +96,7 @@ const Detail = () => {
 }
 
 export default Detail;
+
 const Title = styled.div`
     font-size: 30px;
     text-align: center;

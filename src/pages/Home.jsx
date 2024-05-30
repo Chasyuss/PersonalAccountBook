@@ -1,34 +1,19 @@
-import React, { act, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import styled from 'styled-components';
-import fakedata from './FakeData.json';
 import { v4 as uuidv4 } from 'uuid';
 import { useNavigate } from 'react-router-dom';
-import { useExpense } from '../context/Context';
-
+import { ExpenseContext } from '../context/ExpenseContext';
 
 const Home = () => {
-    const months = [
-        '1월', '2월', '3월', '4월', '5월', '6월',
-        '7월', '8월', '9월', '10월', '11월', '12월'
-    ];
+    const { allItems, activeMonth, handleTab, handleSubmit } = useContext(ExpenseContext);
+    const months = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'];
 
-    //내용 추가 
-    const [date, setDate] = useState(""); //날짜
-    const [item, setItem] = useState(""); //항목
-    const [amount, setAmount] = useState(""); //돈
-    const [description, setDescription] = useState(""); //내용
-    const { allItems, addItem } = useExpense();
+    const [date, setDate] = useState('');
+    const [item, setItem] = useState('');
+    const [amount, setAmount] = useState('');
+    const [description, setDescription] = useState('');
 
-
-    const [activeMonth, setActiveMonth] = useState(() => {
-        return localStorage.getItem("activeMonth") || "1월";
-    });
-
-    useEffect(() => {
-        localStorage.setItem("activeMonth", activeMonth);
-    }, [activeMonth]);
-
-    const handleSubmit = ((e) => {
+    const onSubmit = (e) => {
         e.preventDefault();
 
         if (!date || !amount) {
@@ -54,35 +39,26 @@ const Home = () => {
             description
         };
 
-        addItem(newItem);
+        handleSubmit(newItem);
 
-        //입력창 비우기
         setDate('');
         setItem('');
         setAmount('');
         setDescription('');
-    });
-
-    const handleTab = (month) => {
-        setActiveMonth(month);
     };
 
-    const BothData = [...fakedata, ...allItems]; // fakeData랑 로컬스토리지에 있는 데이터를 합침 
-
-    // 원하는 월 필터링 
-    //fakedata랑 로컬스토리지 데이터를 합치게 나오게함
-    const filterdata = BothData.filter(item => {
-        const dataMonth = new Date(item.date).getMonth() + 1; // 0부터 시작이니까 1 더해줘야 안밀림
+    const filteredItems = allItems.filter(item => {
+        const dataMonth = new Date(item.date).getMonth() + 1;
         return `${dataMonth}월` === activeMonth;
-    }); // 문자열을 날짜로 변경후, 해당 열을 가져옴 
+    });
 
-    const navigate = useNavigate(); //페이지 이동 
-    const HandleDetailClick = (id) => {
+    const navigate = useNavigate();
+    const handleDetailClick = (id) => {
         navigate(`/detail/${id}`);
-    }
+    };
 
     return (
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={onSubmit}>
             <Container>
                 <Input>
                     <label> 날짜 </label>
@@ -98,17 +74,16 @@ const Home = () => {
 
                 <Tabs>
                     {months.map((month, index) => (
-                        <Tab key={index} $active={activeMonth === month} //클릭한 박스 확인위해 active prop에 할당할 값
-                            onClick={() => handleTab(month)} > {month} </Tab>
+                        <Tab key={index} $active={activeMonth === month} onClick={() => handleTab(month)}>{month}</Tab>
                     ))}
                 </Tabs>
                 <Content>
-                    {filterdata.length > 0 ? (
-                        filterdata.map((item) => (
-                            <List key={item.id} onClick={() => HandleDetailClick(item.id)}>
-                                <DateWrapper> {item.date} </DateWrapper>
-                                <MoneyWrapper> {item.amount}원 </MoneyWrapper>
-                                <Description> {item.item}: {item.description} </Description>
+                    {filteredItems.length > 0 ? (
+                        filteredItems.map((item) => (
+                            <List key={item.id} onClick={() => handleDetailClick(item.id)}>
+                                <DateWrapper>{item.date}</DateWrapper>
+                                <MoneyWrapper>{item.amount}원</MoneyWrapper>
+                                <Description>{item.item}: {item.description}</Description>
                             </List>
                         ))
                     ) : (
@@ -116,7 +91,7 @@ const Home = () => {
                     )}
                 </Content>
             </Container>
-        </form >
+        </form>
     );
 };
 
