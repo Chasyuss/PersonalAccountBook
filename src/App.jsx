@@ -3,12 +3,14 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Home from "./pages/Home";
 import Detail from "./pages/Detail";
 import GlobalStyle from './styles/GlobalStyle';
-import { ExpenseProvider } from "./context/ExpenseContext";
+import { Provider } from "react-redux";
+import store from "./redux/Store";
+
 
 
 const App = () => {
   return (
-    <ExpenseProvider>
+    <Provider store={store}>
       <BrowserRouter>
         <GlobalStyle />
         <Routes>
@@ -16,7 +18,7 @@ const App = () => {
           <Route path="/detail/:id" element={<Detail />} />
         </Routes>
       </BrowserRouter>
-    </ExpenseProvider>
+    </Provider>
   );
 };
 

@@ -1,23 +1,23 @@
-import React, { useContext, useRef, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import React, { useRef } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { styled } from 'styled-components';
-import { ExpenseContext } from '../context/ExpenseContext';
-
+import { useDispatch, useSelector } from 'react-redux';
+import { editExpense, deleteExpense } from '../redux/slices/expenseSlice';
 
 const Detail = () => {
-    const { allItems, handleEdit, handleDelete } = useContext(ExpenseContext);
     const { id } = useParams();
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
 
-    const navigate = useNavigate(); //창 넘긱 
-    const item = [...allItems].find(item => item.id === id); // 정보 화면 
+    const allItems = useSelector(state => state.expenses.allItems);
+    const item = allItems.find(item => item.id === id);
 
-    //Ref사용
     const dateRef = useRef();
     const itemRef = useRef();
     const amountRef = useRef();
     const descriptionRef = useRef();
 
-    const onEdit = () => {
+    const handleEdit = () => {
         const editItem = {
             ...item,
             date: dateRef.current.value,
@@ -26,14 +26,14 @@ const Detail = () => {
             description: descriptionRef.current.value
         };
 
-        handleEdit(editItem);
+        dispatch(editExpense(editItem));
         alert('수정되었습니다.');
         navigate('/');
     };
 
-    const onDelete = () => {
+    const handleDelete = () => {
         if (window.confirm('정말로 이 지출 항목을 삭제하시겠습니까?')) {
-            handleDelete(item.id);
+            dispatch(deleteExpense(item.id));
             alert('항목이 삭제되었습니다');
             navigate('/');
         } else {
@@ -41,9 +41,8 @@ const Detail = () => {
         }
     };
 
-    //되돌아가기 버튼 
     const handleBack = () => {
-        navigate(-1); // 이전단계로 되돌리기 
+        navigate(-1);
     };
 
     return (
@@ -71,14 +70,14 @@ const Detail = () => {
                 </Detailinput>
 
                 <AllButton>
-                    <EditButton onClick={onEdit}> 수정 </EditButton>
-                    <DeleteButton onClick={onDelete}> 삭제 </DeleteButton>
+                    <EditButton onClick={handleEdit}> 수정 </EditButton>
+                    <DeleteButton onClick={handleDelete}> 삭제 </DeleteButton>
                     <Button onClick={handleBack}> 뒤로가기 </Button>
                 </AllButton>
             </DetailContainer>
         </div>
-    )
-}
+    );
+};
 
 export default Detail;
 

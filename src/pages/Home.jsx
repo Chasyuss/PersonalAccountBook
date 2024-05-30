@@ -1,19 +1,27 @@
-import React, { useContext, useState } from 'react';
-import styled from 'styled-components';
-import { v4 as uuidv4 } from 'uuid';
+import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { setActiveMonth, addExpense } from '../redux/slices/expenseSlice';
+import { styled } from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-import { ExpenseContext } from '../context/ExpenseContext';
 
 const Home = () => {
-    const { allItems, activeMonth, handleTab, handleSubmit } = useContext(ExpenseContext);
-    const months = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'];
+    const months = [
+        '1월', '2월', '3월', '4월', '5월', '6월',
+        '7월', '8월', '9월', '10월', '11월', '12월'
+    ];
 
-    const [date, setDate] = useState('');
-    const [item, setItem] = useState('');
-    const [amount, setAmount] = useState('');
-    const [description, setDescription] = useState('');
+    const [date, setDate] = useState("");
+    const [item, setItem] = useState("");
+    const [amount, setAmount] = useState("");
+    const [description, setDescription] = useState("");
 
-    const onSubmit = (e) => {
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+
+    const allItems = useSelector(state => state.expenses.allItems);
+    const activeMonth = useSelector(state => state.expenses.activeMonth);
+
+    const handleSubmit = (e) => {
         e.preventDefault();
 
         if (!date || !amount) {
@@ -31,15 +39,7 @@ const Home = () => {
             return;
         }
 
-        const newItem = {
-            id: uuidv4(),
-            date,
-            item,
-            amount,
-            description
-        };
-
-        handleSubmit(newItem);
+        dispatch(addExpense({ date, item, amount, description }));
 
         setDate('');
         setItem('');
@@ -47,18 +47,21 @@ const Home = () => {
         setDescription('');
     };
 
-    const filteredItems = allItems.filter(item => {
+    const handleTab = (month) => {
+        dispatch(setActiveMonth(month));
+    };
+
+    const filterdata = allItems.filter(item => {
         const dataMonth = new Date(item.date).getMonth() + 1;
         return `${dataMonth}월` === activeMonth;
     });
 
-    const navigate = useNavigate();
     const handleDetailClick = (id) => {
         navigate(`/detail/${id}`);
     };
 
     return (
-        <form onSubmit={onSubmit}>
+        <form onSubmit={handleSubmit}>
             <Container>
                 <Input>
                     <label> 날짜 </label>
@@ -74,12 +77,14 @@ const Home = () => {
 
                 <Tabs>
                     {months.map((month, index) => (
-                        <Tab key={index} $active={activeMonth === month} onClick={() => handleTab(month)}>{month}</Tab>
+                        <Tab key={index} $active={activeMonth === month} onClick={() => handleTab(month)}>
+                            {month}
+                        </Tab>
                     ))}
                 </Tabs>
                 <Content>
-                    {filteredItems.length > 0 ? (
-                        filteredItems.map((item) => (
+                    {filterdata.length > 0 ? (
+                        filterdata.map(item => (
                             <List key={item.id} onClick={() => handleDetailClick(item.id)}>
                                 <DateWrapper>{item.date}</DateWrapper>
                                 <MoneyWrapper>{item.amount}원</MoneyWrapper>
